@@ -1,10 +1,13 @@
 const difficultyInput = document.getElementById('difficulty')
 const play = document.getElementById('play');
 const container = document.querySelector('.container');
+const userCounter = document.getElementById('user-counter')
 let bombArray = [];
 let winCounter = [];
+
 play.addEventListener("click", function(){
     play.classList.add('d-none');
+    winCounter = [];
     const difficulty = difficultyInput.value;
     const gridValues = gridValuesGenerator(difficulty);
     const boxNumber = gridValues[0];
@@ -15,6 +18,7 @@ play.addEventListener("click", function(){
     const bombArray = bombArrayGenerator(boxNumber, bombNumber)
     winCondition = boxNumber - bombArray.length;
     addFunctionToQuerySelectorAll('div.box', handleDivClick);
+    console.log(bombArray);
 })
 
 // !FUNCTIONS
@@ -74,22 +78,26 @@ function getRandomIntInclusive(min, max) {
 function handleDivClick(){
     let clicked = parseInt(this.textContent)
     if (bombArray.includes(parseInt(this.textContent))){
-        for (let i = 0; i < bombArray.length; i++){
-            bombArray[i];
-            bombSelector = bombArray[i];
-        }
-        console.log(this);
         this.classList.add("red");
         play.classList.remove("d-none");
         play.innerHTML = `<span>Hai perso! Clicca per rigiocare</span>`;
+        const allElements = document.getElementsByClassName('box');
+        for(let i = 0; i < allElements.length; i++){
+            if (bombArray.includes(parseInt(allElements[i].innerText))){
+                allElements[i].classList.add("red");
+                console.log(allElements[i]);
+            }
+        }
     } else {
         this.classList.add("azure");
+        if(!winCounter.includes(clicked)){
+            winCounter.push(clicked);
+        }
     }
-    if(!winCounter.includes(clicked)){
-        winCounter.push(clicked);
-    }
+    userCounter.innerHTML = `${winCounter.length}`
     if (winCondition === winCounter.length){
-        play.innerHTML = `<span>Complimenti, hai vinto! Clicca per rigiocare</span>`;
+        play.classList.remove("d-none");
+        play.innerHTML = `<span>Complimenti, hai vinto! <br> Clicca per rigiocare</span>`;
     }
 }
 
